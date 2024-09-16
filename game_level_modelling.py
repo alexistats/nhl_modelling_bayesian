@@ -37,6 +37,10 @@ def load_and_prepare_data(player_name, player_data_file, schedule_file, team_map
 
     # Prepare player data
     player_df['opp_int'] = player_df['opponent'].map(abbrev_to_id)
+    # Create season2 field
+    unique_seasons = sorted(player_df['season'].unique())
+    season_mapping = {season: i+1 for i, season in enumerate(unique_seasons)}
+    player_df['season2'] = player_df['season'].map(season_mapping)
 
     df_current_season = player_df[player_df['season2'] == player_df['season2'].max()]
     N_games = len(df_current_season)
