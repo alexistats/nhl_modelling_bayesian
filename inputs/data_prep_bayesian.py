@@ -57,6 +57,6 @@ column_order = ['Date', 'Team', 'Goals', 'Assists', 'Points', 'Plusminus', 'PIM'
 new_df = new_df[column_order]
 
 # Save to CSV
-new_df.to_csv('Jack_Hughes_df.csv', index=False)
+new_df.to_csv('Jack Hughes_df.csv', index=False)
 
-print("Data has been reformatted and saved to 'Jack_Hughes_df.csv'")
+print("Data has been reformatted and saved to 'Jack Hughes_df.csv'")

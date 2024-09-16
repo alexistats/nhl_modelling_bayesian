@@ -6,6 +6,8 @@ import arviz as az
 import pytensor.tensor as pt
 import logging
 import os
+from data_prep_bayesian import process_player_data
+from data_prep_schedules import format_team_schedule
 
 ## Define input and output directories
 INPUT_DIR = os.path.join('inputs')
@@ -156,8 +158,12 @@ def main(player_name, player_data_file, schedule_file, team_mapping_file):
 
 
 if __name__ == '__main__':
-    player_name = "Cale Makar"  # Change this to analyze different players
-    player_data_file = f"{player_name}_df.csv"  # Change this to the appropriate file for each player
-    schedule_file = "avalanche_schedule_2425_formatted.csv"  # This might need to change depending on the player's team
-    team_mapping_file = "team_mapping.csv"
-    main(player_name, player_data_file, schedule_file, team_mapping_file)
+    player_names = ['Sidney Crosby', 'Jack Hughes', 'Cale Makar', 'Kirill Kaprizov', 'JT Miller', 'Matthew Tkachuk']
+    team_names = ['penguins', 'devils', 'avalanche', 'wild', 'canucks', 'panthers']
+    for player_name, team_name in zip(player_names, team_names):
+        schedule_df = format_team_schedule(team_name)
+        player_df = process_player_data(player_name, team_name)
+        player_data_file = f"{player_name}_df.csv"  # Change this to the appropriate file for each player
+        schedule_file = f"{team_name}_schedule_2425_formatted.csv"  # This might need to change depending on the player's team
+        team_mapping_file = "team_mapping.csv"
+        main(player_name, player_data_file, schedule_file, team_mapping_file)
