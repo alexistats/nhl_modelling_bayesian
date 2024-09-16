@@ -1,0 +1,33 @@
+id,team_name,abbreviation,division_id,team_name_2
+0,Vancouver,VAN,1,Vancouver Canucks
+2,Calgary,CGY,1,Calgary Flames
+3,Anaheim,ANA,1,Anaheim Ducks
+4,Arizona,ARI,2,Arizona Coyotes
+5,Vegas,VEG,1,Vegas Golden Knights
+6,Philadelphia,PHI,4,Philadelphia Flyers
+7,Seattle,SEA,1,Seattle Kraken
+8,Nashville,NSH,2,Nashville Predators
+9,New York Rangers,NYR,4,New York Rangers
+10,Detroit,DET,3,Detroit Red Wings
+11,Boston,BOS,3,Boston Bruins
+12,Buffalo,BUF,3,Buffalo Sabres
+13,St. Louis,STL,2,St. Louis Blues
+14,Winnipeg,WPG,2,Winnipeg Jets
+15,Chicago,CHI,2,Chicago Blackhawks
+16,Dallas,DAL,2,Dallas Stars
+17,Pittsburgh,PIT,4,Pittsburgh Penguins
+18,Los Angeles,LAK,1,Los Angeles Kings
+19,Minnesota,MIN,2,Minnesota Wild
+20,Carolina,CAR,4,Carolina Hurricanes
+21,Toronto,TOR,3,Toronto Maple Leafs
+22,Columbus,CBJ,4,Columbus Blue Jackets
+23,San Jose,SJS,1,San Jose Sharks
+24,New Jersey,NJD,4,New Jersey Devils
+25,New York Islanders,NYI,4,New York Islanders
+26,Ottawa,OTT,3,Ottawa Senators
+27,Montreal,MTL,3,Montreal Canadiens
+28,Washington,WSH,4,Washington Capitals
+29,Tampa Bay,TBL,3,Tampa Bay Lightning
+30,Colorado,COL,2,Colorado Avalanche
+31,Edmonton,EDM,1,Edmonton Oilers
+1,Florida,FLA,3,Florida Panthers

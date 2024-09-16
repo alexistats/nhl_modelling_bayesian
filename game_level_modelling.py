@@ -156,8 +156,8 @@ def main(player_name, player_data_file, schedule_file, team_mapping_file):
 
 
 if __name__ == '__main__':
-    player_name = "Connor McDavid"  # Change this to analyze different players
-    player_data_file = "McDavid_df.csv"  # Change this to the appropriate file for each player
-    schedule_file = "oilers_schedule_2122.csv"  # This might need to change depending on the player's team
+    player_name = "Cale Makar"  # Change this to analyze different players
+    player_data_file = f"{player_name}_df.csv"  # Change this to the appropriate file for each player
+    schedule_file = "avalanche_schedule_2425_formatted.csv"  # This might need to change depending on the player's team
     team_mapping_file = "team_mapping.csv"
     main(player_name, player_data_file, schedule_file, team_mapping_file)
