@@ -5,21 +5,38 @@ import matplotlib.pyplot as plt
 import arviz as az
 import pytensor.tensor as pt
 import logging
+import os
 
+## Define input and output directories
+INPUT_DIR = os.path.join('inputs')
+OUTPUT_DIR = os.path.join('outputs')
 
-def load_and_prepare_data(player_name, player_data_file, schedule_file):
+# Ensure output directory exists
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+def load_team_mapping(mapping_file):
+    team_mapping = pd.read_csv(mapping_file)
+    full_name_to_id = dict(zip(team_mapping['team_name'], team_mapping['id']))
+    abbrev_to_id = dict(zip(team_mapping['abbreviation'], team_mapping['id']))
+    full_name_to_abbrev = dict(zip(team_mapping['team_name'], team_mapping['abbreviation']))
+    return full_name_to_id, abbrev_to_id, full_name_to_abbrev
+
+def load_and_prepare_data(player_name, player_data_file, schedule_file, team_mapping_file):
     # Load data
-    player_df = pd.read_csv(player_data_file)
-    schedule = pd.read_csv(schedule_file)
+    player_df = pd.read_csv(os.path.join(INPUT_DIR, player_data_file))
+    schedule = pd.read_csv(os.path.join(INPUT_DIR, schedule_file))
+    full_name_to_id, abbrev_to_id, full_name_to_abbrev = load_team_mapping(os.path.join(INPUT_DIR, team_mapping_file))
 
     # Data preparation
     schedule['Home'] = schedule['Vs'].str.contains('vs').astype(int)
-    teams = schedule['Opponent'].unique()
-    teams2 = ["VAN", "CGY", "ANA", "ARI", "VGK", "PHI", "SEA", "NSH", "NYR", "DET", "BOS", "BUF", "STL", "WPG", "CHI",
-              "DAL", "PIT", "LAK", "MIN", "CAR", "TOR", "CBJ", "SJS", "NJD", "NYI", "OTT", "FLA", "MTL", "WSH", "TBL",
-              "COL"]
-    schedule['Teams_2'] = pd.Categorical(schedule['Opponent']).rename_categories(dict(zip(teams, teams2)))
-    schedule['opp_int'] = pd.Categorical(schedule['Teams_2']).codes + 1
+
+    # Prepare schedule data
+    schedule['Home'] = schedule['Vs'].str.contains('vs').astype(int)
+    schedule['Teams_2'] = schedule['Opponent'].map(full_name_to_abbrev)
+    schedule['opp_int'] = schedule['Opponent'].map(full_name_to_id)
+
+    # Prepare player data
+    player_df['opp_int'] = player_df['opponent'].map(abbrev_to_id)
 
     df_current_season = player_df[player_df['season2'] == player_df['season2'].max()]
     N_games = len(df_current_season)
@@ -88,7 +105,7 @@ def build_and_sample_model(player_df, remaining_schedule, curr_assists, curr_goa
     # Sampling
     with model:
         trace = pm.sample(100, tune=100, return_inferencedata=True, progressbar=True)
-    az.to_netcdf(trace, f"{player_name}_model_results.nc")
+    az.to_netcdf(trace, os.path.join(OUTPUT_DIR, f"{player_name}_model_results.nc"))
 
     return trace
 
@@ -109,17 +126,20 @@ def analyze_results(trace, player_name):
     plt.title(f"{player_name} Posterior Predicted Points")
     plt.xlabel("Total Points")
     plt.ylabel("Density")
+    plt.savefig(os.path.join(OUTPUT_DIR, f"{player_name}_posterior_predicted_points.png"))
     plt.show()
+
+    plt.close()
 
     return point_draws
 
 
-def main(player_name, player_data_file, schedule_file):
+def main(player_name, player_data_file, schedule_file, team_mapping_file):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.info(f"Starting analysis for {player_name}")
 
     player_df, remaining_schedule, curr_assists, curr_goals = load_and_prepare_data(player_name, player_data_file,
-                                                                                    schedule_file)
+                                                                                    schedule_file, team_mapping_file)
     logging.info("Data preparation complete, starting model building and sampling")
 
     trace = build_and_sample_model(player_df, remaining_schedule, curr_assists, curr_goals, player_name)
@@ -135,5 +155,5 @@ if __name__ == '__main__':
     player_name = "Connor McDavid"  # Change this to analyze different players
     player_data_file = "McDavid_df.csv"  # Change this to the appropriate file for each player
     schedule_file = "oilers_schedule_2122.csv"  # This might need to change depending on the player's team
-
-    main(player_name, player_data_file, schedule_file)
+    team_mapping_file = "team_mapping.csv"
+    main(player_name, player_data_file, schedule_file, team_mapping_file)
