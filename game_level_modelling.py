@@ -5,12 +5,19 @@ import matplotlib.pyplot as plt
 import arviz as az
 import pytensor.tensor as pt
 import logging
+import os
 
+## Define input and output directories
+INPUT_DIR = os.path.join('inputs')
+OUTPUT_DIR = os.path.join('outputs')
+
+# Ensure output directory exists
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def load_and_prepare_data(player_name, player_data_file, schedule_file):
     # Load data
-    player_df = pd.read_csv(player_data_file)
-    schedule = pd.read_csv(schedule_file)
+    player_df = pd.read_csv(os.path.join(INPUT_DIR, player_data_file))
+    schedule = pd.read_csv(os.path.join(INPUT_DIR, schedule_file))
 
     # Data preparation
     schedule['Home'] = schedule['Vs'].str.contains('vs').astype(int)
@@ -88,7 +95,7 @@ def build_and_sample_model(player_df, remaining_schedule, curr_assists, curr_goa
     # Sampling
     with model:
         trace = pm.sample(100, tune=100, return_inferencedata=True, progressbar=True)
-    az.to_netcdf(trace, f"{player_name}_model_results.nc")
+    az.to_netcdf(trace, os.path.join(OUTPUT_DIR, f"{player_name}_model_results.nc"))
 
     return trace
 
@@ -109,7 +116,10 @@ def analyze_results(trace, player_name):
     plt.title(f"{player_name} Posterior Predicted Points")
     plt.xlabel("Total Points")
     plt.ylabel("Density")
+    plt.savefig(os.path.join(OUTPUT_DIR, f"{player_name}_posterior_predicted_points.png"))
     plt.show()
+
+    plt.close()
 
     return point_draws
 
